@@ -6,7 +6,6 @@
 using namespace std;
 using namespace boost;
 
-// Class for binary search
 class BinarySearch {
 public:
     int search(int arr[], int size, int num) {
@@ -25,11 +24,11 @@ public:
             }
         }
         
-        return -1; // Element not found
+        return -1; 
     }
 };
 
-// Class for representing a graph
+
 class Graph {
 public:
     typedef adjacency_list<vecS, vecS, directedS> DirectedGraph;
@@ -62,7 +61,7 @@ int main() {
         cout << "\nThe number, " << num << " is not found in the given Array" << endl;
     }
 
-    // Creating a sample graph
+    
     Graph graph;
     graph.addEdge(0, 1);
     graph.addEdge(1, 2);
