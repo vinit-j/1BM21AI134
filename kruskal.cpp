@@ -1,82 +1,97 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
+struct Edge {
+    int weight;
+    int u, v;
 
-#define V 5
+    Edge(int w, int uu, int vv) : weight(w), u(uu), v(vv) {}
 
+    bool operator<(const Edge& other) const {
+        return weight < other.weight;
+    }
+};
 
-int minKey(int key[], bool mstSet[])
-{
+class MSTKruskal {
+public:
+    MSTKruskal(int vertices, int edges) : V(vertices), E(edges) {}
 
-int min = INT_MAX, min_index;
+    void addEdge(int u, int v, int weight) {
+        edges.push_back(Edge(weight, u, v));
+    }
 
-for (int v = 0; v < V; v++)
-if (mstSet[v] == false && key[v] < min)
-min = key[v], min_index = v;
+    void kruskalMST() {
+        sort(edges.begin(), edges.end());
 
-return min_index;
-}
+        vector<pair<int, int>> result;
 
+        vector<int> parent(V);
+        for (int i = 0; i < V; i++) {
+            parent[i] = i;
+        }
 
-void printMST(int parent[], int graph[V][V])
-{
-cout << "Edge \tWeight\n";
-for (int i = 1; i < V; i++)
-cout << parent[i] << " - " << i << " \t"
-<< graph[i][parent[i]] << " \n";
-}
+        int edgeCount = 0;
+        for (auto edge : edges) {
+            int weight = edge.weight;
+            int u = edge.u;
+            int v = edge.v;
 
+            int parentU = find(parent, u);
+            int parentV = find(parent, v);
 
-void primMST(int graph[V][V])
-{
+            if (parentU != parentV) {
+                result.push_back({u, v});
+                unionSets(parent, parentU, parentV);
+                edgeCount++;
 
-int parent[V];
+                if (edgeCount == V - 1) {
+                    break; // Minimum spanning tree found
+                }
+            }
+        }
 
+        cout << "Edges in Minimum Spanning Tree:\n";
+        for (auto edge : result) {
+            cout << edge.first << " - " << edge.second << endl;
+        }
+    }
 
-int key[V];
+private:
+    int V;
+    int E;
+    vector<Edge> edges;
 
-bool mstSet[V];
+    int find(vector<int>& parent, int node) {
+        if (parent[node] != node) {
+            parent[node] = find(parent, parent[node]);
+        }
+        return parent[node];
+    }
 
+    void unionSets(vector<int>& parent, int u, int v) {
+        int parentU = find(parent, u);
+        int parentV = find(parent, v);
+        parent[parentU] = parentV;
+    }
+};
 
-for (int i = 0; i < V; i++)
-key[i] = INT_MAX, mstSet[i] = false;
+int main() {
+    int V, E;
+    cout << "Enter the number of vertices and edges: ";
+    cin >> V >> E;
 
+    MSTKruskal mst(V, E);
 
-key[0] = 0;
+    cout << "Enter edges (u v weight):\n";
+    for (int i = 0; i < E; i++) {
+        int u, v, weight;
+        cin >> u >> v >> weight;
+        mst.addEdge(u, v, weight);
+    }
 
+    mst.kruskalMST();
 
-parent[0] = -1;
-
-for (int count = 0; count < V - 1; count++) {
-
-
-int u = minKey(key, mstSet);
-
-
-mstSet[u] = true;
-
-for (int v = 0; v < V; v++)
-
-
-if (graph[u][v] && mstSet[v] == false
-&& graph[u][v] < key[v])
-parent[v] = u, key[v] = graph[u][v];
-}
-
-
-printMST(parent, graph);
-}
-
-
-int main()
-{
-int graph[V][V] = { { 0, 2, 0, 6, 0 },
-{ 2, 0, 3, 8, 5 },
-{ 0, 3, 0, 0, 7 },
-{ 6, 8, 0, 0, 9 },
-{ 0, 5, 7, 9, 0 } };
-
-primMST(graph);
-
-return 0;
+    return 0;
 }
