@@ -1,64 +1,59 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
-# define NO_OF_CHARS 256
 
+class PatternSearch {
+public:
+    PatternSearch(const string& txt, const string& pat) : txt(txt), pat(pat) {
+        NO_OF_CHARS = 256;
+        badchar.resize(NO_OF_CHARS, -1);
+        m = pat.size();
+        n = txt.size();
+    }
 
-void badCharHeuristic( string str, int size,
-int badchar[NO_OF_CHARS])
-{
-int i;
+    void badCharHeuristic() {
+        for (int i = 0; i < NO_OF_CHARS; i++) {
+            badchar[i] = -1;
+        }
 
+        for (int i = 0; i < m; i++) {
+            badchar[static_cast<int>(pat[i])] = i;
+        }
+    }
 
-for (i = 0; i < NO_OF_CHARS; i++)
-badchar[i] = -1;
+    void searchPattern() {
+        badCharHeuristic();
+        int s = 0;
+        while (s <= (n - m)) {
+            int j = m - 1;
+            while (j >= 0 && pat[j] == txt[s + j]) {
+                j--;
+            }
 
+            if (j < 0) {
+                cout << "Pattern occurs at shift = " << s << endl;
+                s += (s + m < n) ? m - badchar[txt[s + m]] : 1;
+            } else {
+                s += max(1, j - badchar[txt[s + j]]);
+            }
+        }
+    }
 
-for (i = 0; i < size; i++)
-badchar[(int) str[i]] = i;
+private:
+    string txt;
+    string pat;
+    int NO_OF_CHARS;
+    vector<int> badchar;
+    int m; // Size of the pattern
+    int n; // Size of the text
+};
+
+int main() {
+    string txt = "Hello my name is Vinit";
+    string pat = "Vinit";
+
+    PatternSearch patternSearch(txt, pat);
+    patternSearch.searchPattern();
+
+    return 0;
 }
-
-
-void search( string txt, string pat)
-{
-int m = pat.size();
-int n = txt.size();
-
-int badchar[NO_OF_CHARS];
-
-
-badCharHeuristic(pat, m, badchar);
-
-int s = 0;
-while(s <= (n - m))
-{
-int j = m - 1;
-
-
-while(j >= 0 && pat[j] == txt[s + j])
-j--;
-
-
-if (j < 0)
-{
-cout << "pattern occurs at shift = " << s << endl;
-
-
-s += (s + m < n)? m-badchar[txt[s + m]] : 1;
-
-}
-
-else
-
-s += max(1, j - badchar[txt[s + j]]);
-}
-}
-
-
-int main()
-{
-string txt= "ABAAABCD";
-string pat = "ABC";
-search(txt, pat);
-return 0;
-}
-
