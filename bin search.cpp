@@ -1,31 +1,73 @@
-#include<iostream>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <boost/graph/adjacency_list.hpp>
+
 using namespace std;
-int main()
-{
-    int i, arr[10], num, first, last, middle;
-    cout<<"Enter 10 Elements (in ascending order): ";
-    for(i=0; i<10; i++)
-        cin>>arr[i];
-    cout<<"\nEnter Element to be Search: ";
-    cin>>num;
-    first = 0;
-    last = 9;
-    middle = (first+last)/2;
-    while(first <= last)
-    {
-        if(arr[middle]<num)
-            first = middle+1;
-        else if(arr[middle]==num)
-        {
-            cout<<"\nThe number, "<<num<<" found at Position "<<middle+1;
-            break;
+using namespace boost;
+
+// Class for binary search
+class BinarySearch {
+public:
+    int search(int arr[], int size, int num) {
+        int first = 0;
+        int last = size - 1;
+        
+        while (first <= last) {
+            int middle = first + (last - first) / 2;
+            
+            if (arr[middle] == num) {
+                return middle;
+            } else if (arr[middle] < num) {
+                first = middle + 1;
+            } else {
+                last = middle - 1;
+            }
         }
-        else
-            last = middle-1;
-        middle = (first+last)/2;
+        
+        return -1; // Element not found
     }
-    if(first>last)
-        cout<<"\nThe number, "<<num<<" is not found in given Array";
-    cout<<endl;
+};
+
+// Class for representing a graph
+class Graph {
+public:
+    typedef adjacency_list<vecS, vecS, directedS> DirectedGraph;
+    
+    DirectedGraph g;
+    
+    void addEdge(int from, int to) {
+        add_edge(from, to, g);
+    }
+};
+
+int main() {
+    BinarySearch binarySearch;
+    int arr[10];
+    int num;
+    
+    cout << "Enter 10 Elements (in ascending order): ";
+    for (int i = 0; i < 10; i++) {
+        cin >> arr[i];
+    }
+    
+    cout << "\nEnter Element to be Searched: ";
+    cin >> num;
+    
+    int result = binarySearch.search(arr, 10, num);
+    
+    if (result != -1) {
+        cout << "\nThe number, " << num << " found at Position " << result + 1 << endl;
+    } else {
+        cout << "\nThe number, " << num << " is not found in the given Array" << endl;
+    }
+
+    // Creating a sample graph
+    Graph graph;
+    graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
+
     return 0;
 }
